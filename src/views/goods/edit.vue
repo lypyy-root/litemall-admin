@@ -696,6 +696,7 @@ export default {
     },
 
     specToProduct() {
+      // 如果没有规格则不生成货品
       if (this.specifications.length === 0) {
         return
       }
@@ -722,7 +723,7 @@ export default {
       // 根据临时规格列表生产货品规格
       // 算法基于 https://blog.csdn.net/tyhj_sf/article/details/53893125
       var productsIndex = 0
-      var products = []
+      var products = this.products;
       var combination = []
       var n = specValues.length
       for (var s = 0; s < n; s++) {
@@ -736,7 +737,7 @@ export default {
           var z = specValues[x][combination[x]]
           specifications.push(this.specifications[z].value)
         }
-        products[productsIndex] = { id: productsIndex, specifications: specifications, price: 0.00, number: 0, url: '' }
+        products[productsIndex] = {...products[productsIndex], specifications: specifications} //{ id: productsIndex, specifications: specifications, price: 0.00, number: 0, url: '' }
         productsIndex++
 
         index++

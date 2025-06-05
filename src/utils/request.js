@@ -25,6 +25,8 @@ service.interceptors.request.use(
         "X-Litemall-TenantId" : getTenantId(),
       }
     }
+    console.log( config.baseURL);
+    
     return config
   },
   error => {

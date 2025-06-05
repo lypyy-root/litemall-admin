@@ -707,6 +707,9 @@ export default {
       this.specToProduct()
     },
     handleSpecificationEdit(row) {
+      debugger
+      console.log('handleSpecificationEdit', row);
+      
       this.specForm = row
       this.specVisiable = true;
     },
