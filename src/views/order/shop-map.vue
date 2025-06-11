@@ -39,6 +39,11 @@ export default {
   created() {
     this.getList()
   },
+  beforeUpdate() {
+    console.log('mounted', );
+    // this.$refs.mousetoolRef.open('polylineTool');
+    this.doStartPolyline()
+  },
   computed: {
     markers() {
       if (!this.list.length) return []
@@ -48,14 +53,20 @@ export default {
           extData: item.storeName,
         }
       })
+      res.push({
+        position: [116.579152,39.889871],
+        extData: '发货地址'
+      })
       console.log('markers', res);
       return res
     },
     mapCenter() {
-      if (!this.list.length) return [116.40969, 39.89945]
-      const res = [this.list[0].storeDimensions, this.list[0].storeAccuracy];
+      return [116.579152,39.889871]
+      /* if (!this.list.length) return [116.579152,39.889871]
+      // const res = [this.list[0].storeDimensions, this.list[0].storeAccuracy];
+      
       console.log('mapCenter', res);
-      return res
+      return res */
     },
   },
   methods: {
@@ -103,6 +114,12 @@ export default {
     handleChangeGoods(item) {
       this.currnetOrder = item;
     },
+    onMarkMouseup(e) {
+      console.log(e);
+    },
+    doStartPolyline() {
+      this.$refs.mousetoolRef.open('polylineTool');
+    }
     /*handleDownload() {
       this.downloadLoading = true
       import('@/utils/vendor/Export2Excel').then(excel => {
@@ -222,6 +239,11 @@ export default {
             :icon="item.storePicUrl"
             @click="handleMarkerClick(item)"
           ></tdt-marker>
+          <tdt-marker
+            :position="[116.579152,39.889871]"
+            extData="发货地址"
+          ></tdt-marker>
+          <tdt-mousetool ref="mousetoolRef" :markTool="{ follow: true }" :polylineTool="{showLabel: true}" @mark-mouseup="onMarkMouseup"></tdt-mousetool>
         </tdt-map>
         <div class="goods-container" v-if="currnetOrderList.length > 0">
           <div class="goods-title">店铺：{{currnetOrderList[0].storeName}}</div>
