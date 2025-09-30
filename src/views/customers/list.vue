@@ -2,42 +2,74 @@
 <template>
   <div class="app-container">
     <!-- 搜索区域 -->
-    <el-form :inline="true" :model="query" class="mb-2">
-      <el-form-item label="客户ID">
-        <el-input v-model="query.userId" placeholder="输入客户ID" clearable />
-      </el-form-item>
-      <el-form-item label="客户名称">
-        <el-input
-          v-model="query.username"
-          placeholder="输入客户名称"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="电话">
-        <el-input v-model="query.mobile" placeholder="输入电话" clearable />
-      </el-form-item>
-      <el-form-item label="渠道ID">
-        <el-input
-          v-model="query.channelId"
-          placeholder="输入渠道ID"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="负责人">
-        <el-input v-model="query.leadeId" placeholder="输入负责人" clearable />
-      </el-form-item>
-      <el-form-item label="业务员">
-        <el-input
-          v-model="query.salesmanId"
-          placeholder="输入业务员"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <div style="margin-bottom: 20px; display: flex; align-items: center">
+      <!-- 新增客户按钮 -->
+      <el-button type="primary" icon="el-icon-plus" @click="goAdd">
+        新增客户
+      </el-button>
+
+      <!-- 搜索表单 -->
+      <el-form :inline="true" :model="query" style="margin-left: 20px">
+        <el-form-item>
+          <el-input v-model="query.userId" placeholder="输入客户ID" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            v-model="query.username"
+            placeholder="输入客户名称"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="query.mobile" placeholder="输入电话" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            v-model="query.channelId"
+            placeholder="输入渠道ID"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            v-model="query.leadeId"
+            placeholder="输入负责人"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            v-model="query.salesmanId"
+            placeholder="输入业务员"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="query.region" placeholder="区域" clearable />
+        </el-form-item>
+
+        <el-form-item>
+          <el-input v-model="query.street" placeholder="街道" clearable />
+        </el-form-item>
+
+        <el-form-item>
+          <el-date-picker
+            v-model="query.orderCycle"
+            type="date"
+            placeholder="下单周期"
+            value-format="yyyy-MM-dd"
+            clearable
+          />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleSearch">
+            查询
+          </el-button>
+          <el-button @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
     <!-- 表格 -->
     <el-table :data="list" border>
@@ -56,18 +88,9 @@
       <el-table-column prop="leaderPhone" label="联系电话" min-width="140" />
       <el-table-column prop="time" label="下单周期" min-width="180" />
       <el-table-column label="操作" width="160" fixed="right">
-        <!-- <template #default="{ row }"> -->
-        <el-button type="text" @click="goEdit(row)">编辑</el-button>
-        <!-- <el-divider direction="vertical"></el-divider>
-          <el-popconfirm
-            title="确定删除该客户吗？"
-            ok-text="删除"
-            cancel-text="取消"
-            @confirm="handleDelete(row)"
-          >
-            <el-button type="text" slot="reference">删除</el-button>
-          </el-popconfirm> -->
-        <!-- </template> -->
+        <template #default="{ row }">
+          <el-button type="text" @click="goEdit(row)">编辑</el-button>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -88,7 +111,7 @@
 </template>
 
 <script>
-import { getCustomerList, deleteCustomer } from "@/api/customer";
+import { getCustomerList, deleteCustomer } from "@/api/customers";
 
 export default {
   name: "CustomerList",
@@ -101,6 +124,9 @@ export default {
         channelId: "",
         leadeId: "",
         salesmanId: "",
+        region: "",
+        street: "",
+        orderCycle: "",
         page: 1,
         limit: 10,
       },
@@ -116,8 +142,17 @@ export default {
     async getList() {
       this.loading = true;
       try {
-        const { data } = await getCustomerList(this.query);
-
+        const params = {};
+        Object.keys(this.query).forEach((k) => {
+          if (
+            this.query[k] !== "" &&
+            this.query[k] !== null &&
+            this.query[k] !== undefined
+          ) {
+            params[k] = this.query[k];
+          }
+        });
+        const { data } = await getCustomerList(params);
         this.list = (data && data.list) || [];
         this.total = (data && data.total) || 0;
       } finally {
@@ -136,13 +171,19 @@ export default {
         channelId: "",
         leadeId: "",
         salesmanId: "",
+        region: "",
+        street: "",
+        orderCycle: "",
         page: 1,
         limit: 10,
       };
       this.getList();
     },
+    goAdd() {
+      this.$router.push({ path: "/customers/edit" });
+    },
     goEdit(row) {
-      this.$router.push({ path: "/customer/edit", query: { id: row.userId } });
+      this.$router.push({ path: "/customers/edit", query: { id: row.userId } });
     },
     async handleDelete(row) {
       try {

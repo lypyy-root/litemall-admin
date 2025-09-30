@@ -664,32 +664,33 @@ export const asyncRoutes = [
     ],
   },
   {
-    path: "/customer",
+    path: "/customers",
     component: Layout,
-    redirect: "/customer/list",
-    name: "Customer",
+    redirect: "noRedirect",
+    name: "Customers",
+    alwaysShow: true, // <— force folder-style menu even with one visible child
     meta: { title: "客户管理", icon: "peoples" },
     children: [
       {
         path: "list",
-        component: () => import("@/views/customer/list"),
-        name: "CustomerList",
+        component: () => import("@/views/customers/list"), // <— ensure folder name matches your files
+        name: "CustomersList",
         meta: {
           title: "客户列表",
           noCache: true,
-          perms: ["GET /admin/user/getUserList"], // 对齐后端权限字符串
+          perms: ["GET /admin/user/getUserList"],
         },
       },
       {
         path: "edit",
-        component: () => import("@/views/customer/edit"),
-        name: "CustomerEdit",
+        component: () => import("@/views/customers/edit"),
+        name: "CustomersEdit",
         hidden: true,
         meta: {
           title: "编辑客户",
           noCache: true,
           perms: ["GET /admin/user/userDetail"],
-          activeMenu: "/customer/list",
+          activeMenu: "/customers/list",
         },
       },
     ],

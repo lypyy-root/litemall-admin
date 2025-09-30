@@ -10,7 +10,7 @@ export function getCustomerList(params) {
 
 export function getCustomerDetail(id) {
   return request({
-    url: `/user/getUserDetail/${id}`,
+    url: `/user/userDetail`,
     method: "get",
     params: { id },
   });
