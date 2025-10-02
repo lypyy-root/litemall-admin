@@ -693,6 +693,25 @@ export const asyncRoutes = [
           activeMenu: "/customers/list",
         },
       },
+      {
+        path: "price-templates",
+        name: "PriceTemplateList",
+        component: () => import("@/views/customers/PriceTemplateList.vue"),
+        meta: { title: "价格模板" },
+      },
+      {
+        path: "price-templates/:id",
+        name: "TemplateEdit",
+        hidden: true,
+        component: () => import("@/views/customers/PriceTemplateEdit.vue"),
+        meta: { title: "模板详情", activeMenu: "/customer/price-templates" },
+      },
+      {
+        path: "product-library",
+        name: "ProductLibrary",
+        component: () => import("@/views/customers/ProductLibrary.vue"),
+        meta: { title: "商品库" },
+      },
     ],
   },
 
