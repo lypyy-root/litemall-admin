@@ -704,7 +704,7 @@ export const asyncRoutes = [
         name: "TemplateEdit",
         hidden: true,
         component: () => import("@/views/customers/PriceTemplateEdit.vue"),
-        meta: { title: "模板详情", activeMenu: "/customer/price-templates" },
+        meta: { title: "模板详情" },
       },
       {
         path: "product-library",

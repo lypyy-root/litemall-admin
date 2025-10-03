@@ -189,14 +189,13 @@
                 <el-form-item required label="门头照（限1张）">
                   <template #label> 门头照 </template>
                   <el-upload
-                    :action="uploadAction"
+                    :action="null"
                     list-type="picture-card"
                     :limit="1"
                     :file-list="s._storePicFile"
                     :before-upload="beforeImageUpload"
-                    :on-success="(res, file) => onStorePicSuccess(res, file, s)"
+                    :http-request="(opts) => uploadStorePic(opts, s)"
                     :on-remove="() => onStorePicRemove(s)"
-                    :headers="uploadHeaders"
                   >
                     <i class="el-icon-plus"></i>
                   </el-upload>
@@ -262,16 +261,13 @@
               <el-col :span="12">
                 <el-form-item label="配送路线（多张）">
                   <el-upload
-                    :action="uploadAction"
+                    :action="null"
                     list-type="picture-card"
                     multiple
                     :file-list="s._deliveryFiles"
                     :before-upload="beforeImageUpload"
-                    :on-success="
-                      (res, file) => onRouteUploadSuccess(res, file, s)
-                    "
+                    :http-request="(opts) => uploadRoutePic(opts, s)"
                     :on-remove="(file) => onRouteRemove(file, s)"
-                    :headers="uploadHeaders"
                   >
                     <i class="el-icon-plus"></i>
                   </el-upload>
@@ -307,6 +303,7 @@
 
 <script>
 import { getCustomerDetail, updateCustomerDetail } from "@/api/customers";
+import { uploadImage } from "@/api/upload";
 // 如需上传鉴权：import { getToken } from '@/utils/auth'
 
 export default {
@@ -314,10 +311,7 @@ export default {
   data() {
     return {
       id: this.$route.query.id || "",
-      uploadAction: "/admin/storage/upload", // TODO: 替换为真实上传地址
-      uploadHeaders: {
-        // 'X-Litemall-Admin-Token': getToken()
-      },
+
       form: {
         // 提交字段
         userId: "",
@@ -345,21 +339,19 @@ export default {
           accountNumber: "",
         },
       },
-      // 顶部表单校验
+
       rules: {
         userName: [
           { required: true, message: "请输入店主姓名", trigger: "blur" },
         ],
         name: [{ required: true, message: "请输入店铺名称", trigger: "blur" }],
         phone: [{ required: true, message: "请输入店铺电话", trigger: "blur" }],
-        // 渠道用 required 星标 + 自己检查（接口字段名未做校验prop）
       },
       activeStores: [],
     };
   },
   async created() {
     if (this.id) await this.loadDetail();
-    // 兜底：接口不回顶层 userId，就用路由 id
     this.form.userId = this.form.userId || this.id || "";
   },
   methods: {
