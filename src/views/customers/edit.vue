@@ -17,20 +17,20 @@
               <el-input v-model="form.userName" placeholder="请输入" />
             </el-form-item>
 
-            <el-form-item label="客户openID绑定">
+            <el-form-item label="客户openID">
               <div class="openid-row">
-                <el-input v-model="form.openId" placeholder="请输入" />
-                <el-button class="ml-8" @click="handleQueryOpenId"
+                <el-input v-model="form.openId" placeholder="请输入" disabled />
+                <!-- <el-button class="ml-8" @click="handleQueryOpenId"
                   >查询</el-button
                 >
                 <el-button class="ml-8" type="primary" @click="handleBindOpenId"
                   >绑定</el-button
-                >
+                > -->
               </div>
             </el-form-item>
 
             <el-form-item label="客户来源">
-              <el-select v-model="form.source" placeholder="请选择">
+              <el-select v-model="form.source" placeholder="请选择" class="w-100">
                 <el-option label="线上引流" value="online" />
                 <el-option label="线下拜访" value="offline" />
                 <el-option label="转介绍" value="refer" />
@@ -47,71 +47,38 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item required label="客户报价策略">
-              <el-radio-group v-model="form.userLevel">
+              <el-radio-group v-model="form.level">
                 <el-radio :label="0">默认价格</el-radio>
                 <el-radio :label="1">客户专属价</el-radio>
-                <el-radio :label="2">客户单独价</el-radio>
+                <!-- <el-radio :label="2">客户单独价</el-radio> -->
               </el-radio-group>
             </el-form-item>
 
-            <!-- 财务信息（放在报价策略下方） -->
-            <el-card shadow="never" class="mb-2 inner-card" header="财务信息">
-              <el-form :model="form.finance" label-width="120px">
-                <el-row :gutter="20">
-                  <el-col :span="12">
-                    <el-form-item label="结算方式">
-                      <el-radio-group v-model="form.isSigning">
-                        <el-radio :label="0">签单</el-radio>
-                        <el-radio :label="1">线上支付</el-radio>
-                      </el-radio-group>
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="发票">
-                      <el-radio-group v-model="form.finance.isInvoice">
-                        <el-radio :label="0">否</el-radio>
-                        <el-radio :label="1">是</el-radio>
-                      </el-radio-group>
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="账户名称">
-                      <el-input v-model="form.finance.account" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="纳税人识别号">
-                      <el-input v-model="form.finance.taxpayerSn" />
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="开户行地址">
-                      <el-input v-model="form.finance.address" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="开户银行">
-                      <el-input v-model="form.finance.bankOfDeposit" />
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="开户行账号">
-                      <el-input v-model="form.finance.accountNumber" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
-            </el-card>
-
-            <el-form-item label="报价模板ID">
-              <el-input
+            <el-form-item label="报价模板">
+              <!-- <el-input
                 v-model="form.templateId"
                 placeholder="userTemplate.code"
-              />
+              /> -->
+              <!-- <el-select v-model="form.templateId" placeholder="请选择报价模板">
+
+              </el-select> -->
+              <el-select
+                v-model="form.templateId"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请选择报价模板"
+                :remote-method="searchPriceTemplate"
+                :loading="searchLoading"
+                class="w-100"
+              >
+                <el-option
+                  v-for="item of tempPriceTemplateList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
 
@@ -126,25 +93,26 @@
             </el-form-item>
 
             <el-form-item label="负责人电话/姓名">
-              <el-input v-model="form.adminName" placeholder="请输入" />
+              <!-- <el-input v-model="form.adminName" placeholder="请输入" /> -->
+              <el-select v-model="form.responsiblePersonId" placeholder="请选择负责人" class="w-100">
+                <el-option
+                  v-for="item of adminList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
             </el-form-item>
 
             <el-form-item label="业务员电话/姓名">
-              <el-input v-model="form.salesmanName" placeholder="请输入" />
-            </el-form-item>
-
-            <!-- 必填：渠道（右列底部） -->
-            <el-form-item required>
-              <template #label>渠道 </template>
-              <el-select
-                v-model="form.channel"
-                placeholder="请选择"
-                class="w-100"
-              >
-                <el-option label="台球厅" value="billiards" />
-                <el-option label="商超" value="market" />
-                <el-option label="医药渠道" value="pharma" />
-                <el-option label="其他" value="other" />
+              <!-- <el-input v-model="form.salesmanName" placeholder="请输入" /> -->
+              <el-select v-model="form.salesmanId" placeholder="请选择业务员" class="w-100">
+                <el-option
+                  v-for="item of salesmanList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -152,19 +120,83 @@
       </el-form>
     </el-card>
 
+    <!-- 财务信息（放在报价策略下方） -->
+    <el-card shadow="never" class="mb-2 inner-card" header="财务信息">
+      <el-form :model="form.finance" label-width="120px">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="结算方式">
+              <el-radio-group v-model="form.isSigning">
+                <el-radio :label="0">线上支付</el-radio>
+                <el-radio :label="1">签单</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="发票">
+              <el-radio-group v-model="form.finance.isInvoice">
+                <el-radio :label="0">否</el-radio>
+                <el-radio :label="1">是</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="账户名称">
+              <el-input v-model="form.finance.account" :disabled="form.finance.isInvoice === 0" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="纳税人识别号">
+              <el-input v-model="form.finance.taxpayerSn" :disabled="form.finance.isInvoice === 0" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="开户行地址">
+              <el-input v-model="form.finance.address" :disabled="form.finance.isInvoice === 0" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="开户银行">
+              <el-input v-model="form.finance.bankOfDeposit" :disabled="form.finance.isInvoice === 0" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="开户行账号">
+              <el-input v-model="form.finance.accountNumber" :disabled="form.finance.isInvoice === 0" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
+
     <!-- 门店信息 -->
-    <el-card shadow="never" class="mb-2" header="门店信息">
-      <div class="mb-2">
-        <el-button type="primary" @click="addStore">新增门店</el-button>
-      </div>
+    <el-card shadow="never" class="mb-2">
+      <template slot="header">
+        <div class="mb-2 header">
+          <span>门店信息</span>
+          <el-button type="primary" @click="addStore">
+            <i class="el-icon-plus"></i>
+            <span>新增门店</span>
+          </el-button>
+        </div>
+      </template>
 
       <el-collapse v-model="activeStores">
         <el-collapse-item
           v-for="(s, idx) in form.storeList"
           :key="s.id || idx"
           :name="String(idx)"
-          :title="`门店 ${idx + 1}`"
         >
+          <template slot="title">
+            <div>
+              <span>门店 {{idx + 1}}</span>
+              <span v-if="s.deleted" style="color: red; margin-left: 5px;text-decoration: line-through;">(待删除)</span>
+            </div>
+          </template>
           <!-- 每个门店独立表单（便于布局） -->
           <el-form :model="s" label-width="120px">
             <el-row :gutter="20">
@@ -189,7 +221,7 @@
                 <el-form-item required label="门头照（限1张）">
                   <template #label> 门头照 </template>
                   <el-upload
-                    :action="null"
+                    action="null"
                     list-type="picture-card"
                     :limit="1"
                     :file-list="s._storePicFile"
@@ -211,6 +243,17 @@
                     <el-input v-model="s.storeDimensions" placeholder="纬度" />
                   </div>
                 </el-form-item>
+                <!-- 必填：渠道（右列底部） -->
+                <el-form-item required>
+                  <template #label>渠道</template>
+                  <el-select
+                    v-model="s.channel"
+                    placeholder="请选择渠道"
+                    class="w-100"
+                  >
+                    <el-option v-for="item in brandList" :key="item.code" :label="item.name" :value="item.code" />
+                  </el-select>
+                </el-form-item>
               </el-col>
 
               <!-- 客户详细地址（必填 -> 城市/区域/街道 + 详细地址） -->
@@ -218,21 +261,43 @@
                 <el-form-item required>
                   <template #label> 客户详细地址 </template>
                   <div class="region">
-                    <el-input
+                    <!-- <el-input
                       v-model="s.city"
                       placeholder="城市（示例：北京市）"
                       class="region-item"
-                    />
-                    <el-input
+                    /> -->
+                    <el-select
+                      v-model="s.storeCity"
+                      placeholder="城市（示例：北京市）"
+                      class="region-item"
+                    >
+                      <el-option v-for="item in cityList" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                    <el-select
+                      v-model="s.storeDistrict"
+                      placeholder="区域（示例：朝阳区）"
+                      class="region-item"
+                      @change="s.ward = ''"
+                    >
+                      <el-option v-for="item in districtList" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                    <!-- <el-input
                       v-model="s.district"
                       placeholder="区域（示例：朝阳区）"
                       class="region-item"
-                    />
-                    <el-input
+                    /> -->
+                    <!-- <el-input
                       v-model="s.street"
                       placeholder="街道（示例：金盏街道）"
                       class="region-item"
-                    />
+                    /> -->
+                    <el-select
+                      v-model="s.storeStreet"
+                      placeholder="街道（示例：金盏街道）"
+                      class="region-item"
+                    >
+                      <el-option v-for="item in wardList(s.storeDistrict)" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
                   </div>
                   <el-input
                     class="mt-8"
@@ -261,7 +326,7 @@
               <el-col :span="12">
                 <el-form-item label="配送路线（多张）">
                   <el-upload
-                    :action="null"
+                    action="null"
                     list-type="picture-card"
                     multiple
                     :file-list="s._deliveryFiles"
@@ -283,9 +348,26 @@
 
               <!-- 删除门店 -->
               <el-col :span="24">
-                <el-button type="danger" @click="removeStore(idx)"
-                  >删除门店</el-button
+                <el-button
+                  type="primary"
+                  @click="handleUpdateStore(s)"
+                  v-if="s.id !== '' && s.deleted === false"
                 >
+                  <i class="el-icon-check"></i>
+                  <span>保存门店</span>
+                </el-button>
+                <el-button type="danger" @click="removeStore(idx, s.id)"
+                  v-if="s.deleted === false"
+                >
+                  <i class="el-icon-delete"></i>
+                  <span>删除门店</span>
+                </el-button>
+                <el-button type="success" @click="handleRestoreStore(idx)"
+                  v-if="s.deleted === true"
+                >
+                  <i class="el-icon-refresh-left"></i>
+                  <span>恢复门店</span>
+                </el-button>
               </el-col>
             </el-row>
           </el-form>
@@ -295,15 +377,25 @@
 
     <!-- 操作 -->
     <div style="text-align: right">
-      <el-button @click="$router.back()">取消</el-button>
-      <el-button type="primary" @click="handleSave">保存</el-button>
+      <el-button @click="$router.back()">
+        <i class="el-icon-close"></i>
+        <span>取消</span>
+      </el-button>
+      <el-button type="primary" @click="handleSave">
+        <i class="el-icon-check"></i>
+        <span>保存</span>
+      </el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { getCustomerDetail, updateCustomerDetail } from "@/api/customers";
-import { uploadImage } from "@/api/upload";
+import {
+  getCustomerDetail, updateCustomerDetail, updateCustomerStore, getRegionList,
+  getResponsiblePerson, getSalesmanList,
+} from "@/api/customers";
+// import { uploadImage } from "@/api/upload";
+import { getChannelList, listGoodsTemplates, uploadImage } from "@/api/goodsTemplate";
 // 如需上传鉴权：import { getToken } from '@/utils/auth'
 
 export default {
@@ -311,21 +403,21 @@ export default {
   data() {
     return {
       id: this.$route.query.id || "",
-
+      brandList: [],
       form: {
         // 提交字段
         userId: "",
         userName: "",
         userStatus: 0,
-        userLevel: 0,
+        level: 0,
         isSigning: 0,
         templateId: "",
         // 展示字段
         name: "",
         openId: "",
         phone: "",
-        adminName: "",
-        salesmanName: "",
+        responsiblePersonId: "",
+        salesmanId: "",
         source: "",
         channel: "",
         // 门店 + 财务
@@ -339,7 +431,7 @@ export default {
           accountNumber: "",
         },
       },
-
+      regionList: [],
       rules: {
         userName: [
           { required: true, message: "请输入店主姓名", trigger: "blur" },
@@ -348,13 +440,92 @@ export default {
         phone: [{ required: true, message: "请输入店铺电话", trigger: "blur" }],
       },
       activeStores: [],
+      tempPriceTemplateList: [],
+      searchLoading: false,
+      searchParams: {
+        name: "",
+        page: 1,
+        limit: 20,
+      },
+      salesmanList: [],
+      adminList: [],
     };
   },
   async created() {
+    await this.fetchBrandList();
     if (this.id) await this.loadDetail();
     this.form.userId = this.form.userId || this.id || "";
+    await this.fetchRegionList();
+    await this.searchPriceTemplate('');
+    await this.fetchResponsiblePerson();
+    await this.fetchSalesmanList();
+  },
+  computed: {
+    cityList() {
+      return [
+        {
+          ...this.regionList[0],
+          children: null,
+        }
+      ]
+    },
+    districtList() {
+      return [...this.regionList[0].children[0].children]
+    },
   },
   methods: {
+    // 获取负责人列表
+    async fetchResponsiblePerson() {
+      const res = await getResponsiblePerson();
+      const ok = res?.errno === "success" || res?.errno === 0;
+      const data = ok ? res.data || res : null;
+      if (!data) {
+        this.$message.error(res?.errmsg || "获取负责人列表失败");
+        // throw new Error("NotFound");
+      }
+      this.adminList = data.list || [];
+    },
+    // 获取业务员列表
+    async fetchSalesmanList() {
+      const res = await getSalesmanList();
+      const ok = res?.errno === "success" || res?.errno === 0;
+      const data = ok ? res.data || res : null;
+      if (!data) {
+        this.$message.error(res?.errmsg || "获取业务员列表失败");
+        // throw new Error("NotFound");
+      }
+      this.salesmanList = data.list || [];
+    },
+    wardList(id) {
+      const list = this.districtList.find(d => d.id === id)
+      console.log(list);
+      return list?.streets || []
+    },
+    // 获取区域列表
+    async fetchRegionList() {
+      const res = await getRegionList();
+      const ok = res?.errno === "success" || res?.errno === 0;
+      const data = ok ? res.data || res : null;
+      if (!data) {
+        this.$message.error(res?.errmsg || "获取区域列表失败");
+        throw new Error("NotFound");
+      }
+      this.regionList = data.list || [];
+    },
+    // 获取品牌列表
+    async fetchBrandList() {
+      const res = await getChannelList({
+        page: 1,
+        limit: 50,
+      });
+      const ok = res?.errno === "success" || res?.errno === 0;
+      const data = ok ? res.data || res : null;
+      if (!data) {
+        this.$message.error(res?.errmsg || "获取品牌列表失败");
+        throw new Error("NotFound");
+      }
+      this.brandList = data.list || [];
+    },
     async loadDetail() {
       const res = await getCustomerDetail(this.id);
       const ok = res?.errno === "success" || !res?.errno;
@@ -368,6 +539,14 @@ export default {
       this.form = Object.assign(this.form, data);
       this.form.userId = data.userId || data.id || this.id;
       this.form.templateId = data?.userTemplate?.code || "";
+      this.form.responsiblePersonId = data?.responsiblePersonId || "";
+      this.form.salesmanId = data?.salesmanId || "";
+      this.form.brand = data?.brand || "";
+      this.form.userTemplate = data?.userTemplate || "";
+      this.form.level = data?.level || 0;
+      this.form.isSigning = data?.isSigning || 0;
+      
+      
 
       // 门店 normalize
       const rawStores = Array.isArray(data.storeList) ? data.storeList : [];
@@ -390,6 +569,7 @@ export default {
           district: s.district || "",
           street: s.street || "",
           ...s,
+          deliveryRemarks: s.deliveryRemarks || "",
           deliveryUrl: urls, // 实际提交字段
           _storePicFile: storePic, // 上传组件预览
           _deliveryFiles: urls.map((u, i) => ({ name: `route-${i}`, url: u })),
@@ -420,6 +600,28 @@ export default {
       if (!isImage) this.$message.error("仅支持图片文件");
       if (!isLt5M) this.$message.error("图片大小不能超过 5MB");
       return isImage && isLt5M;
+    },
+
+    uploadRoutePic(e, s) {
+      console.log('uploadRoutePic',e, s);
+      if (!e) {
+        return this.$message.error("请选择图片");
+      }
+      const file = e.file;
+      uploadImage(file).then((res) => {
+        this.onRouteUploadSuccess(res, file, s);
+      });
+    },
+
+    uploadStorePic(e, s) {
+      console.log('uploadStorePic', e, s);
+      if (!e) {
+        return this.$message.error("请选择图片");
+      }
+      const file = e.file;
+      uploadImage(file).then((res) => {
+        this.onStorePicSuccess(res, file, s);
+      });
     },
 
     // 门头照 上传成功
@@ -468,6 +670,7 @@ export default {
     addStore() {
       this.form.storeList.push({
         id: "",
+        deleted: false,
         userId: this.form.userId,
         addressId: "",
         // 必填/核心
@@ -490,6 +693,15 @@ export default {
         deliveryRemarks: "",
         isDefault: false,
         channel: "",
+        channelBase: {},
+        finance: {
+          isInvoice: 0,
+          account: "",
+          taxpayerSn: "",
+          address: "",
+          bankOfDeposit: "",
+          accountNumber: "",
+        },
         // 上传组件 file-list
         _storePicFile: [],
         _deliveryFiles: [],
@@ -497,22 +709,32 @@ export default {
       this.activeStores = this.form.storeList.map((_, i) => String(i));
     },
 
-    removeStore(idx) {
+    removeStore(idx, storeId) {
       this.$confirm("确认删除该门店吗？", "提示", { type: "warning" })
         .then(() => {
-          this.form.storeList.splice(idx, 1);
-          this.activeStores = this.form.storeList.map((_, i) => String(i));
+          if (storeId) {
+            // 删除已经添加门店
+            this.form.storeList[idx].deleted = true;
+            this.activeStores.splice(idx, 1);
+          } else {
+            this.form.storeList.splice(idx, 1);
+            this.activeStores = this.form.storeList.map((_, i) => String(i));
+          }
         })
         .catch(() => {});
     },
 
+    handleRestoreStore(idx) {
+      this.form.storeList[idx].deleted = false;
+    },
+
     // 顶部 openid 按钮占位
-    handleQueryOpenId() {
+    /* handleQueryOpenId() {
       this.$message.info("TODO: 调用后端查询 OpenID 的接口");
     },
     handleBindOpenId() {
       this.$message.info("TODO: 调用后端绑定 OpenID 的接口");
-    },
+    }, */
 
     // 提交前校验（顶部 + 门店关键字段 + 渠道）
     async handleSave() {
@@ -522,22 +744,29 @@ export default {
       });
       if (!valid) return;
 
-      if (!this.form.channel) {
+      /* if (!this.form.channel) {
         this.$message.error("请选择渠道");
         return;
-      }
+      } */
 
       // 校验每个门店的必填
       for (let i = 0; i < this.form.storeList.length; i++) {
         const s = this.form.storeList[i];
-        if (!s.storeNikeName)
+        if (!s.storeNikeName) {
           return this.$message.error(`门店${i + 1}: 请填写收货人名称`);
-        if (!s.storePhone)
+        }
+        if (!s.storePhone) {
           return this.$message.error(`门店${i + 1}: 请填写收货人电话`);
-        if (!s.storeAccuracy || !s.storeDimensions)
+        }
+        if (!s.storeAccuracy || !s.storeDimensions) {
           return this.$message.error(`门店${i + 1}: 请填写客户经纬度`);
-        if (!s.storeAddress)
+        }
+        if (!s.storeAddress) {
           return this.$message.error(`门店${i + 1}: 请填写客户详细地址`);
+        }
+        if (!s.channelBase) {
+          return this.$message.error(`门店${i + 1}: 请选择渠道`);
+        }
       }
 
       // 确保 userId
@@ -552,19 +781,32 @@ export default {
         userId: this.form.userId,
         userName: this.form.userName,
         userStatus: this.form.userStatus,
-        userLevel: this.form.userLevel,
+        userLevel: this.form.level,
         isSigning: this.form.isSigning,
         templateId: this.form.templateId,
-        storeList: this.form.storeList.map((s) => {
-          const { _storePicFile, _deliveryFiles, ...rest } = s;
-          // 若后端需要字符串：rest.deliveryUrl = JSON.stringify(rest.deliveryUrl || [])
-          return rest;
-        }),
+        responsiblePersonId: this.form.responsiblePersonId,
+        salesmanId: this.form.salesmanId,
+        storeList: [],
         finance: {
           ...this.form.finance,
           isInvoice: this.form.finance.isInvoice ? 1 : 0,
         },
       };
+      
+      for (const item of this.form.storeList) {
+        const { _storePicFile, _deliveryFiles, ...rest } = item;
+        
+        if (rest.id) {
+          if (rest.deleted) {
+            payload.storeList.push(rest);
+          } else {
+            continue;
+          }
+        } else {
+          payload.storeList.push(rest);
+        }
+        // payload.storeList.push(rest);
+      }
 
       try {
         await updateCustomerDetail(payload);
@@ -574,11 +816,47 @@ export default {
         this.$message.error("保存失败");
       }
     },
+
+    // 搜索报价模板
+    async searchPriceTemplate(query) {
+      this.searchLoading = true;
+      try {
+        this.searchParams.name = query || null;
+        const res = await listGoodsTemplates(this.searchParams);
+        if (res.errno === "success" || res.errno === 0) {
+          this.tempPriceTemplateList = res.data.list || [];
+        } else {
+          this.$message.error("搜索报价模板失败");
+        }
+      } catch (e) {
+        this.$message.error("搜索报价模板失败");
+      } finally {
+        this.searchLoading = false;
+      }
+    },
+
+    async handleUpdateStore(data) {
+      try {
+        const res = await updateCustomerStore(data);
+        if (res.errno === "success" || res.errno === 0) {
+          this.$message.success("更新门店成功");
+        } else {
+          this.$message.error("更新门店失败");
+        }
+      } catch (e) {
+        this.$message.error("更新门店失败");
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .mb-2 {
   margin-bottom: 16px;
 }

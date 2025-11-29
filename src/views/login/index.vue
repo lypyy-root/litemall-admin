@@ -81,9 +81,9 @@
 
     </el-form>
     <!--  底部  -->
-    <div class="el-login-footer">
+    <!-- <div class="el-login-footer">
       <span>Copyright © 2022 927069313@qq.com 版权所有 <a href="https://beian.miit.gov.cn/">黔ICP备2022000992号</a></span>
-    </div>
+    </div> -->
   </div>
 </template>
 

@@ -34,6 +34,12 @@ module.exports = {
     host: "0.0.0.0",
     port: port,
     open: false,
+    allowedHosts: [
+      'x7fc7698.natappfree.cc', // natapp 映射域名
+      'localhost', // 本地默认域名
+      '127.0.0.1', // 本地回环地址
+      '.natappfree.cc' // 通配 natapp 免费域名后缀（关键，适配转发时的 Host 变化）
+    ],
     proxy: {
       "/admin": {
         target: "https://cyjss.top",

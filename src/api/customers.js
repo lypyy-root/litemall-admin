@@ -22,10 +22,32 @@ export function updateCustomerDetail(data) {
     data,
   });
 }
-// export function deleteCustomer(id) {
-//   return request({
-//     url: '/user/delete',
-//     method: 'post',
-//     data: { id }
-//   })
-// }
+
+export function updateCustomerStore(data) {
+  return request({
+    url: "/user/updateStore",
+    method: "post",
+    data,
+  });
+}
+
+export function getRegionList() {
+  return request({
+    url: "/region/list",
+    method: "get",
+  });
+}
+
+export function getResponsiblePerson() {
+  return request({
+    url: "/option/getResponsiblePerson",
+    method: "get",
+  });
+}
+
+export function getSalesmanList() {
+  return request({
+    url: "/option/getSalesman",
+    method: "get",
+  });
+}
