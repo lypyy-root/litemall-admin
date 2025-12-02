@@ -78,10 +78,10 @@
         current-row-key="goods.code"
       >
         <el-table-column type="selection" width="50" />
-        <el-table-column label="类别" prop="category.name" />
-        <el-table-column label="商品名称" prop="goods.name" />
+        <el-table-column label="类别" prop="category.name" min-width="150"/>
+        <el-table-column label="商品名称" prop="goods.name" min-width="400" />
         <el-table-column label="品牌" prop="salesScenario.name" />
-        <el-table-column label="规格" prop="goodsProduct">
+        <el-table-column label="规格" prop="goodsProduct" min-width="120">
           <template #default="{ row }">
             <span>{{ row.goodsProduct.join(' ') }}</span>
           </template>
@@ -92,7 +92,7 @@
         <el-table-column label="建议零售价(单瓶)" prop="retailPrice" />
         <el-table-column label="商品是否上架" prop="status" />
         <el-table-column label="权重" prop="weight" />
-        <el-table-column label="操作" width="180">
+        <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button type="text" @click="doUnBindGoodsToTemplate(row)">
               <i class="el-icon-delete"></i>
@@ -196,10 +196,10 @@
         @selection-change="handleSelectGoodsListChange"
       >
         <el-table-column type="selection" width="50" />
-        <el-table-column label="类别" prop="category.name" />
-        <el-table-column label="商品名称" prop="goods.name" />
+        <el-table-column label="类别" prop="category.name" min-width="150" />
+        <el-table-column label="商品名称" prop="goods.name" min-width="400" />
         <el-table-column label="品牌" prop="salesScenario.name" />
-        <el-table-column label="规格" prop="goodsProduct">
+        <el-table-column label="规格" prop="goodsProduct" min-width="120">
           <template #default="{ row }">
             <span>{{ row.goodsProduct.join(' ') }}</span>
           </template>
@@ -210,7 +210,7 @@
         <el-table-column label="建议零售价(单瓶)" prop="retailPrice" />
         <el-table-column label="商品是否上架" prop="status" />
         <el-table-column label="权重" prop="weight" />
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
             <el-button type="text" @click="showBindGoodsToTemplate(row)">
               <i class="el-icon-plus"></i>
